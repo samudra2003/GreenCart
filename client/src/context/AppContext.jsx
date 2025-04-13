@@ -14,6 +14,7 @@ export const AppContextProvider = ({children})=>{
     const[showUserLogin,setShowUserLogin] = useState(false);
     const[products,setProducts] = useState([]);
     const [cartItems,setCartItems] = useState({});
+    const[searchQuery,setSearchQuery] = useState({});
    //fetch all products
     const fetchProducts = async () => {
         setProducts(dummyProducts)
@@ -54,7 +55,26 @@ export const AppContextProvider = ({children})=>{
         toast.success("Product quantity updated in cart ");
     }
 
+   //get cart items count
+    const getCartItemsCount = () => {
+        let count = 0;
+        for(let item in cartItems){
+            count += cartItems[item];
+        }
+        return count;
+    }
+ //get cart  Total amount
+    const getCartAmount = () => {
+      let amount =0;
+      for(const item in cartItems){
+        let  itemInfo = products.find((product) => product._id === item);
+        if(cartItems[item] > 0){
+            amount += cartItems[item] * itemInfo.offerPrice;
+        }
+      }
+      return Math.floor(amount * 100) / 100;
 
+    }
 
 
 
@@ -64,7 +84,7 @@ export const AppContextProvider = ({children})=>{
     }, []);
     
     const value = {navigate, isSeller, setIsSeller, user, setUser, showUserLogin, setShowUserLogin, products ,currency,
-             cartItems, addToCart, removeFromCart, updateCartItem
+             cartItems, addToCart, removeFromCart, updateCartItem,searchQuery,setSearchQuery,getCartItemsCount,getCartAmount
     };
 
     return <AppContext.Provider value={value}>
