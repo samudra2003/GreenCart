@@ -52,17 +52,17 @@ export const login = async (req, res) => {
         return res.json({ success:false, message: "Email and Password are required"});
         }
         // Check if user exists
-        const existingUser = await User.findOne({ email });
-        if (!existingUser) {
+        const user = await User.findOne({ email });
+        if (!user) {
         return res.json({ success: false, message: "Invalid email or password"});
         }
         // Check password
-        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
           return res.json({ success: false, message: "Invalid email or password" });
         }
         // Generate JWT token
-        const token = jwt.sign({id:existingUser._id},process.env.JWT_SECRET, {expiresIn:'7d'});
+        const token = jwt.sign({id:user._id},process.env.JWT_SECRET, {expiresIn:'7d'});
     
         // Set cookie with token
         res.cookie('token', token, { 
@@ -72,7 +72,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days(cookie expiration time)
          });
     
-         return res.json({ success: true, user:{email : existingUser.email,name : existingUser.name} });
+         return res.json({ success: true, user:{email : user.email,name :  user.name} });
     
     } catch (error) {
         console.error( error.message);
@@ -85,7 +85,7 @@ export const login = async (req, res) => {
 
 export const isAuth = async (req, res) => {
     try {
-        const {userId} = req.body;
+      const userId = req.userId;
         const user = await User.findById(userId).select("-password");
         return res.json({ success: true, user });
     } catch (error) {

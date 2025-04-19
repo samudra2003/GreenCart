@@ -6,9 +6,10 @@ import Product from "../models/Product.js";
 export const placeOrderCOD = async (req, res) => {
 
     try {
-        const {userId, items, address} = req.body;
+        const userId = req.userId;
+        const { items, address} = req.body;
         if(!address || items.length === 0) {
-            return res.json({success: false, message: "Invalid data"})
+            return res.json({success: false, message: "Invalid Data"})
         }
         //calculate Amount using items
         let amount = await items.reduce(async(acc, item) => {
@@ -36,7 +37,7 @@ export const placeOrderCOD = async (req, res) => {
 //Get Orders By User ID : /api/order/user
 export const getUserOrders = async (req, res) => {
     try {
-        const {userId} = req.body;
+        const userId = req.userId;
         const orders = await Order.find({
             userId,
             $or:[{paymentType: "COD"}, {isPaid: true}]

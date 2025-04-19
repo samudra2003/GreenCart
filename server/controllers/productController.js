@@ -1,4 +1,6 @@
 import Product from "../models/Product.js";
+import cloudinary from "cloudinary";
+
 
 
 //Add Product : /api/product/add
